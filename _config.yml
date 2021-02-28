@@ -11,7 +11,7 @@ tags:
   - jekyll
   - theme
   - netlify
-show_hero: true
+show_hero: false
 menu:
   - title: WELCOME!
     url: /

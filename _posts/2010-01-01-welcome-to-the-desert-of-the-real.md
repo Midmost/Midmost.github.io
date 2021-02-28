@@ -1,13 +1,13 @@
 ---
-date: 2019-05-16T23:48:05.000Z
+date: 2021
 layout: post
-title: Welcome to the desert of the real
+title: I don't know what to do
 subtitle: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'
 description: >-
   Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
   tempor incididunt ut labore et dolore magna aliqua.
 image: >-
-  https://res.cloudinary.com/dm7h7e8xj/image/upload/v1559821647/theme6_qeeojf.jpg
+![Teum_small.jpg](/Users/heejinjo/Pictures/Teum_small.jpg)
 optimized_image: >-
   https://res.cloudinary.com/dm7h7e8xj/image/upload/c_scale,w_380/v1559821647/theme6_qeeojf.jpg
 category: blog
