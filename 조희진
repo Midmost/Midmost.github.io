@@ -1,0 +1,1566 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "n111a-eda.ipynb의 사본",
+      "provenance": [],
+      "collapsed_sections": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Midmost/Midmost.github.io/blob/main/%EC%A1%B0%ED%9D%AC%EC%A7%84\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "4T9slb2tFkhY",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "69ca5fcd-efa0-406c-85c9-660bf459be59"
+      },
+      "source": [
+        "!sudo apt-get install -y fonts-nanum\n",
+        "!sudo fc-cache -fv\n",
+        "!rm ~/.cache/matplotlib -rf"
+      ],
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Reading package lists... Done\n",
+            "Building dependency tree       \n",
+            "Reading state information... Done\n",
+            "The following NEW packages will be installed:\n",
+            "  fonts-nanum\n",
+            "0 upgraded, 1 newly installed, 0 to remove and 29 not upgraded.\n",
+            "Need to get 9,604 kB of archives.\n",
+            "After this operation, 29.5 MB of additional disk space will be used.\n",
+            "Get:1 http://archive.ubuntu.com/ubuntu bionic/universe amd64 fonts-nanum all 20170925-1 [9,604 kB]\n",
+            "Fetched 9,604 kB in 1s (7,726 kB/s)\n",
+            "debconf: unable to initialize frontend: Dialog\n",
+            "debconf: (No usable dialog-like program is installed, so the dialog based frontend cannot be used. at /usr/share/perl5/Debconf/FrontEnd/Dialog.pm line 76, <> line 1.)\n",
+            "debconf: falling back to frontend: Readline\n",
+            "debconf: unable to initialize frontend: Readline\n",
+            "debconf: (This frontend requires a controlling tty.)\n",
+            "debconf: falling back to frontend: Teletype\n",
+            "dpkg-preconfigure: unable to re-open stdin: \n",
+            "Selecting previously unselected package fonts-nanum.\n",
+            "(Reading database ... 160975 files and directories currently installed.)\n",
+            "Preparing to unpack .../fonts-nanum_20170925-1_all.deb ...\n",
+            "Unpacking fonts-nanum (20170925-1) ...\n",
+            "Setting up fonts-nanum (20170925-1) ...\n",
+            "Processing triggers for fontconfig (2.12.6-0ubuntu2) ...\n",
+            "/usr/share/fonts: caching, new cache contents: 0 fonts, 1 dirs\n",
+            "/usr/share/fonts/truetype: caching, new cache contents: 0 fonts, 3 dirs\n",
+            "/usr/share/fonts/truetype/humor-sans: caching, new cache contents: 1 fonts, 0 dirs\n",
+            "/usr/share/fonts/truetype/liberation: caching, new cache contents: 16 fonts, 0 dirs\n",
+            "/usr/share/fonts/truetype/nanum: caching, new cache contents: 10 fonts, 0 dirs\n",
+            "/usr/local/share/fonts: caching, new cache contents: 0 fonts, 0 dirs\n",
+            "/root/.local/share/fonts: skipping, no such directory\n",
+            "/root/.fonts: skipping, no such directory\n",
+            "/var/cache/fontconfig: cleaning cache directory\n",
+            "/root/.cache/fontconfig: not cleaning non-existent cache directory\n",
+            "/root/.fontconfig: not cleaning non-existent cache directory\n",
+            "fc-cache: succeeded\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "MSnsTgZLKO72"
+      },
+      "source": [
+        "<img src='https://i.imgur.com/RDAD11M.png' width = '200' align = 'right'>\n",
+        "\n",
+        "## *DATA SCIENCE / SECTION 1 / SPRINT 1 / NOTE 1*\n",
+        "\n",
+        "---\n",
+        "\n",
+        "# 📝 Assignment\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "qoR8E-T2TYPd"
+      },
+      "source": [
+        "## 1.데이터셋 불러오기 연습\n",
+        "\n",
+        "다음 url에서 엑셀 파일을 불러오세요. (pandas excel)\n",
+        "\n",
+        "<https://ds-lecture-data.s3.ap-northeast-2.amazonaws.com/stocks/Travel.xlsx>\n",
+        "\n",
+        "  - 데이터셋 변수의 이름은 `df1`, `df2`로 저장하세요.\n",
+        "  - row가 아닌 column에 '매출액', '영업이익' 이 가도록 데이터를 transpose 하세요.\n",
+        "  - 이후 아래 링크를 참조하여 첫번째 row를 column name으로 설정하세요.\n",
+        "\n",
+        "<https://stackoverflow.com/questions/31328861/python-pandas-replacing-header-with-top-row>\n",
+        "\n",
+        "- 파일은 2개의 시트로 구성되어 있으며 각각 이름은 `008770`, `035250` 입니다.\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "wMxnu2SmTS8Z",
+        "colab": {
+          "resources": {
+            "http://localhost:8080/nbextensions/google.colab/files.js": {
+              "data": "Ly8gQ29weXJpZ2h0IDIwMTcgR29vZ2xlIExMQwovLwovLyBMaWNlbnNlZCB1bmRlciB0aGUgQXBhY2hlIExpY2Vuc2UsIFZlcnNpb24gMi4wICh0aGUgIkxpY2Vuc2UiKTsKLy8geW91IG1heSBub3QgdXNlIHRoaXMgZmlsZSBleGNlcHQgaW4gY29tcGxpYW5jZSB3aXRoIHRoZSBMaWNlbnNlLgovLyBZb3UgbWF5IG9idGFpbiBhIGNvcHkgb2YgdGhlIExpY2Vuc2UgYXQKLy8KLy8gICAgICBodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjAKLy8KLy8gVW5sZXNzIHJlcXVpcmVkIGJ5IGFwcGxpY2FibGUgbGF3IG9yIGFncmVlZCB0byBpbiB3cml0aW5nLCBzb2Z0d2FyZQovLyBkaXN0cmlidXRlZCB1bmRlciB0aGUgTGljZW5zZSBpcyBkaXN0cmlidXRlZCBvbiBhbiAiQVMgSVMiIEJBU0lTLAovLyBXSVRIT1VUIFdBUlJBTlRJRVMgT1IgQ09ORElUSU9OUyBPRiBBTlkgS0lORCwgZWl0aGVyIGV4cHJlc3Mgb3IgaW1wbGllZC4KLy8gU2VlIHRoZSBMaWNlbnNlIGZvciB0aGUgc3BlY2lmaWMgbGFuZ3VhZ2UgZ292ZXJuaW5nIHBlcm1pc3Npb25zIGFuZAovLyBsaW1pdGF0aW9ucyB1bmRlciB0aGUgTGljZW5zZS4KCi8qKgogKiBAZmlsZW92ZXJ2aWV3IEhlbHBlcnMgZm9yIGdvb2dsZS5jb2xhYiBQeXRob24gbW9kdWxlLgogKi8KKGZ1bmN0aW9uKHNjb3BlKSB7CmZ1bmN0aW9uIHNwYW4odGV4dCwgc3R5bGVBdHRyaWJ1dGVzID0ge30pIHsKICBjb25zdCBlbGVtZW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3BhbicpOwogIGVsZW1lbnQudGV4dENvbnRlbnQgPSB0ZXh0OwogIGZvciAoY29uc3Qga2V5IG9mIE9iamVjdC5rZXlzKHN0eWxlQXR0cmlidXRlcykpIHsKICAgIGVsZW1lbnQuc3R5bGVba2V5XSA9IHN0eWxlQXR0cmlidXRlc1trZXldOwogIH0KICByZXR1cm4gZWxlbWVudDsKfQoKLy8gTWF4IG51bWJlciBvZiBieXRlcyB3aGljaCB3aWxsIGJlIHVwbG9hZGVkIGF0IGEgdGltZS4KY29uc3QgTUFYX1BBWUxPQURfU0laRSA9IDEwMCAqIDEwMjQ7CgpmdW5jdGlvbiBfdXBsb2FkRmlsZXMoaW5wdXRJZCwgb3V0cHV0SWQpIHsKICBjb25zdCBzdGVwcyA9IHVwbG9hZEZpbGVzU3RlcChpbnB1dElkLCBvdXRwdXRJZCk7CiAgY29uc3Qgb3V0cHV0RWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKG91dHB1dElkKTsKICAvLyBDYWNoZSBzdGVwcyBvbiB0aGUgb3V0cHV0RWxlbWVudCB0byBtYWtlIGl0IGF2YWlsYWJsZSBmb3IgdGhlIG5leHQgY2FsbAogIC8vIHRvIHVwbG9hZEZpbGVzQ29udGludWUgZnJvbSBQeXRob24uCiAgb3V0cHV0RWxlbWVudC5zdGVwcyA9IHN0ZXBzOwoKICByZXR1cm4gX3VwbG9hZEZpbGVzQ29udGludWUob3V0cHV0SWQpOwp9CgovLyBUaGlzIGlzIHJvdWdobHkgYW4gYXN5bmMgZ2VuZXJhdG9yIChub3Qgc3VwcG9ydGVkIGluIHRoZSBicm93c2VyIHlldCksCi8vIHdoZXJlIHRoZXJlIGFyZSBtdWx0aXBsZSBhc3luY2hyb25vdXMgc3RlcHMgYW5kIHRoZSBQeXRob24gc2lkZSBpcyBnb2luZwovLyB0byBwb2xsIGZvciBjb21wbGV0aW9uIG9mIGVhY2ggc3RlcC4KLy8gVGhpcyB1c2VzIGEgUHJvbWlzZSB0byBibG9jayB0aGUgcHl0aG9uIHNpZGUgb24gY29tcGxldGlvbiBvZiBlYWNoIHN0ZXAsCi8vIHRoZW4gcGFzc2VzIHRoZSByZXN1bHQgb2YgdGhlIHByZXZpb3VzIHN0ZXAgYXMgdGhlIGlucHV0IHRvIHRoZSBuZXh0IHN0ZXAuCmZ1bmN0aW9uIF91cGxvYWRGaWxlc0NvbnRpbnVlKG91dHB1dElkKSB7CiAgY29uc3Qgb3V0cHV0RWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKG91dHB1dElkKTsKICBjb25zdCBzdGVwcyA9IG91dHB1dEVsZW1lbnQuc3RlcHM7CgogIGNvbnN0IG5leHQgPSBzdGVwcy5uZXh0KG91dHB1dEVsZW1lbnQubGFzdFByb21pc2VWYWx1ZSk7CiAgcmV0dXJuIFByb21pc2UucmVzb2x2ZShuZXh0LnZhbHVlLnByb21pc2UpLnRoZW4oKHZhbHVlKSA9PiB7CiAgICAvLyBDYWNoZSB0aGUgbGFzdCBwcm9taXNlIHZhbHVlIHRvIG1ha2UgaXQgYXZhaWxhYmxlIHRvIHRoZSBuZXh0CiAgICAvLyBzdGVwIG9mIHRoZSBnZW5lcmF0b3IuCiAgICBvdXRwdXRFbGVtZW50Lmxhc3RQcm9taXNlVmFsdWUgPSB2YWx1ZTsKICAgIHJldHVybiBuZXh0LnZhbHVlLnJlc3BvbnNlOwogIH0pOwp9CgovKioKICogR2VuZXJhdG9yIGZ1bmN0aW9uIHdoaWNoIGlzIGNhbGxlZCBiZXR3ZWVuIGVhY2ggYXN5bmMgc3RlcCBvZiB0aGUgdXBsb2FkCiAqIHByb2Nlc3MuCiAqIEBwYXJhbSB7c3RyaW5nfSBpbnB1dElkIEVsZW1lbnQgSUQgb2YgdGhlIGlucHV0IGZpbGUgcGlja2VyIGVsZW1lbnQuCiAqIEBwYXJhbSB7c3RyaW5nfSBvdXRwdXRJZCBFbGVtZW50IElEIG9mIHRoZSBvdXRwdXQgZGlzcGxheS4KICogQHJldHVybiB7IUl0ZXJhYmxlPCFPYmplY3Q+fSBJdGVyYWJsZSBvZiBuZXh0IHN0ZXBzLgogKi8KZnVuY3Rpb24qIHVwbG9hZEZpbGVzU3RlcChpbnB1dElkLCBvdXRwdXRJZCkgewogIGNvbnN0IGlucHV0RWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKGlucHV0SWQpOwogIGlucHV0RWxlbWVudC5kaXNhYmxlZCA9IGZhbHNlOwoKICBjb25zdCBvdXRwdXRFbGVtZW50ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQob3V0cHV0SWQpOwogIG91dHB1dEVsZW1lbnQuaW5uZXJIVE1MID0gJyc7CgogIGNvbnN0IHBpY2tlZFByb21pc2UgPSBuZXcgUHJvbWlzZSgocmVzb2x2ZSkgPT4gewogICAgaW5wdXRFbGVtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2NoYW5nZScsIChlKSA9PiB7CiAgICAgIHJlc29sdmUoZS50YXJnZXQuZmlsZXMpOwogICAgfSk7CiAgfSk7CgogIGNvbnN0IGNhbmNlbCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2J1dHRvbicpOwogIGlucHV0RWxlbWVudC5wYXJlbnRFbGVtZW50LmFwcGVuZENoaWxkKGNhbmNlbCk7CiAgY2FuY2VsLnRleHRDb250ZW50ID0gJ0NhbmNlbCB1cGxvYWQnOwogIGNvbnN0IGNhbmNlbFByb21pc2UgPSBuZXcgUHJvbWlzZSgocmVzb2x2ZSkgPT4gewogICAgY2FuY2VsLm9uY2xpY2sgPSAoKSA9PiB7CiAgICAgIHJlc29sdmUobnVsbCk7CiAgICB9OwogIH0pOwoKICAvLyBXYWl0IGZvciB0aGUgdXNlciB0byBwaWNrIHRoZSBmaWxlcy4KICBjb25zdCBmaWxlcyA9IHlpZWxkIHsKICAgIHByb21pc2U6IFByb21pc2UucmFjZShbcGlja2VkUHJvbWlzZSwgY2FuY2VsUHJvbWlzZV0pLAogICAgcmVzcG9uc2U6IHsKICAgICAgYWN0aW9uOiAnc3RhcnRpbmcnLAogICAgfQogIH07CgogIGNhbmNlbC5yZW1vdmUoKTsKCiAgLy8gRGlzYWJsZSB0aGUgaW5wdXQgZWxlbWVudCBzaW5jZSBmdXJ0aGVyIHBpY2tzIGFyZSBub3QgYWxsb3dlZC4KICBpbnB1dEVsZW1lbnQuZGlzYWJsZWQgPSB0cnVlOwoKICBpZiAoIWZpbGVzKSB7CiAgICByZXR1cm4gewogICAgICByZXNwb25zZTogewogICAgICAgIGFjdGlvbjogJ2NvbXBsZXRlJywKICAgICAgfQogICAgfTsKICB9CgogIGZvciAoY29uc3QgZmlsZSBvZiBmaWxlcykgewogICAgY29uc3QgbGkgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdsaScpOwogICAgbGkuYXBwZW5kKHNwYW4oZmlsZS5uYW1lLCB7Zm9udFdlaWdodDogJ2JvbGQnfSkpOwogICAgbGkuYXBwZW5kKHNwYW4oCiAgICAgICAgYCgke2ZpbGUudHlwZSB8fCAnbi9hJ30pIC0gJHtmaWxlLnNpemV9IGJ5dGVzLCBgICsKICAgICAgICBgbGFzdCBtb2RpZmllZDogJHsKICAgICAgICAgICAgZmlsZS5sYXN0TW9kaWZpZWREYXRlID8gZmlsZS5sYXN0TW9kaWZpZWREYXRlLnRvTG9jYWxlRGF0ZVN0cmluZygpIDoKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJ24vYSd9IC0gYCkpOwogICAgY29uc3QgcGVyY2VudCA9IHNwYW4oJzAlIGRvbmUnKTsKICAgIGxpLmFwcGVuZENoaWxkKHBlcmNlbnQpOwoKICAgIG91dHB1dEVsZW1lbnQuYXBwZW5kQ2hpbGQobGkpOwoKICAgIGNvbnN0IGZpbGVEYXRhUHJvbWlzZSA9IG5ldyBQcm9taXNlKChyZXNvbHZlKSA9PiB7CiAgICAgIGNvbnN0IHJlYWRlciA9IG5ldyBGaWxlUmVhZGVyKCk7CiAgICAgIHJlYWRlci5vbmxvYWQgPSAoZSkgPT4gewogICAgICAgIHJlc29sdmUoZS50YXJnZXQucmVzdWx0KTsKICAgICAgfTsKICAgICAgcmVhZGVyLnJlYWRBc0FycmF5QnVmZmVyKGZpbGUpOwogICAgfSk7CiAgICAvLyBXYWl0IGZvciB0aGUgZGF0YSB0byBiZSByZWFkeS4KICAgIGxldCBmaWxlRGF0YSA9IHlpZWxkIHsKICAgICAgcHJvbWlzZTogZmlsZURhdGFQcm9taXNlLAogICAgICByZXNwb25zZTogewogICAgICAgIGFjdGlvbjogJ2NvbnRpbnVlJywKICAgICAgfQogICAgfTsKCiAgICAvLyBVc2UgYSBjaHVua2VkIHNlbmRpbmcgdG8gYXZvaWQgbWVzc2FnZSBzaXplIGxpbWl0cy4gU2VlIGIvNjIxMTU2NjAuCiAgICBsZXQgcG9zaXRpb24gPSAwOwogICAgd2hpbGUgKHBvc2l0aW9uIDwgZmlsZURhdGEuYnl0ZUxlbmd0aCkgewogICAgICBjb25zdCBsZW5ndGggPSBNYXRoLm1pbihmaWxlRGF0YS5ieXRlTGVuZ3RoIC0gcG9zaXRpb24sIE1BWF9QQVlMT0FEX1NJWkUpOwogICAgICBjb25zdCBjaHVuayA9IG5ldyBVaW50OEFycmF5KGZpbGVEYXRhLCBwb3NpdGlvbiwgbGVuZ3RoKTsKICAgICAgcG9zaXRpb24gKz0gbGVuZ3RoOwoKICAgICAgY29uc3QgYmFzZTY0ID0gYnRvYShTdHJpbmcuZnJvbUNoYXJDb2RlLmFwcGx5KG51bGwsIGNodW5rKSk7CiAgICAgIHlpZWxkIHsKICAgICAgICByZXNwb25zZTogewogICAgICAgICAgYWN0aW9uOiAnYXBwZW5kJywKICAgICAgICAgIGZpbGU6IGZpbGUubmFtZSwKICAgICAgICAgIGRhdGE6IGJhc2U2NCwKICAgICAgICB9LAogICAgICB9OwogICAgICBwZXJjZW50LnRleHRDb250ZW50ID0KICAgICAgICAgIGAke01hdGgucm91bmQoKHBvc2l0aW9uIC8gZmlsZURhdGEuYnl0ZUxlbmd0aCkgKiAxMDApfSUgZG9uZWA7CiAgICB9CiAgfQoKICAvLyBBbGwgZG9uZS4KICB5aWVsZCB7CiAgICByZXNwb25zZTogewogICAgICBhY3Rpb246ICdjb21wbGV0ZScsCiAgICB9CiAgfTsKfQoKc2NvcGUuZ29vZ2xlID0gc2NvcGUuZ29vZ2xlIHx8IHt9OwpzY29wZS5nb29nbGUuY29sYWIgPSBzY29wZS5nb29nbGUuY29sYWIgfHwge307CnNjb3BlLmdvb2dsZS5jb2xhYi5fZmlsZXMgPSB7CiAgX3VwbG9hZEZpbGVzLAogIF91cGxvYWRGaWxlc0NvbnRpbnVlLAp9Owp9KShzZWxmKTsK",
+              "ok": true,
+              "headers": [
+                [
+                  "content-type",
+                  "application/javascript"
+                ]
+              ],
+              "status": 200,
+              "status_text": ""
+            }
+          },
+          "base_uri": "https://localhost:8080/",
+          "height": 90
+        },
+        "outputId": "adfd6281-5115-4a31-a196-8763648fe733"
+      },
+      "source": [
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "\n",
+        "from google.colab import files \n",
+        "uploaded = files.upload()"
+      ],
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "\n",
+              "     <input type=\"file\" id=\"files-e3e5b743-1c35-4a8c-913a-50fe887cea37\" name=\"files[]\" multiple disabled\n",
+              "        style=\"border:none\" />\n",
+              "     <output id=\"result-e3e5b743-1c35-4a8c-913a-50fe887cea37\">\n",
+              "      Upload widget is only available when the cell has been executed in the\n",
+              "      current browser session. Please rerun this cell to enable.\n",
+              "      </output>\n",
+              "      <script src=\"/nbextensions/google.colab/files.js\"></script> "
+            ],
+            "text/plain": [
+              "<IPython.core.display.HTML object>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        },
+        {
+          "output_type": "stream",
+          "text": [
+            "Saving Travel.xlsx to Travel.xlsx\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "YouTjaltFTjv"
+      },
+      "source": [
+        "import io\n",
+        "df = pd.read_excel(io.BytesIO(uploaded['Travel.xlsx']))"
+      ],
+      "execution_count": 3,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "7h6zZ2yaQUzk"
+      },
+      "source": [
+        "data_url = 'https://ds-lecture-data.s3.ap-northeast-2.amazonaws.com/stocks/Travel.xlsx'"
+      ],
+      "execution_count": 4,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "5eFOCSBpTMeF",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 700
+        },
+        "outputId": "3e52aba2-dd71-4609-dd8f-d1fb2e38541a"
+      },
+      "source": [
+        "import pandas as pd\n",
+        "\n",
+        "df = pd.read_excel(data_url)\n",
+        "df.head()"
+      ],
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>주요재무정보</th>\n",
+              "      <th>2019/09\\n(IFRS연결)</th>\n",
+              "      <th>2019/12\\n(IFRS연결)</th>\n",
+              "      <th>2020/03\\n(IFRS연결)</th>\n",
+              "      <th>2020/06\\n(IFRS연결)</th>\n",
+              "      <th>2020/09\\n(IFRS연결)</th>\n",
+              "      <th>2020/12(E)\\n(IFRS연결)</th>\n",
+              "      <th>2021/03(E)\\n(IFRS연결)</th>\n",
+              "      <th>2021/06(E)\\n(IFRS연결)</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>매출액</td>\n",
+              "      <td>14753.0</td>\n",
+              "      <td>15440.0</td>\n",
+              "      <td>9437.0</td>\n",
+              "      <td>5230.0</td>\n",
+              "      <td>8795.0</td>\n",
+              "      <td>9980.0</td>\n",
+              "      <td>9761.0</td>\n",
+              "      <td>9820.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>영업이익</td>\n",
+              "      <td>574.0</td>\n",
+              "      <td>776.0</td>\n",
+              "      <td>-668.0</td>\n",
+              "      <td>-634.0</td>\n",
+              "      <td>-198.0</td>\n",
+              "      <td>50.0</td>\n",
+              "      <td>144.0</td>\n",
+              "      <td>265.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>영업이익(발표기준)</td>\n",
+              "      <td>574.0</td>\n",
+              "      <td>776.0</td>\n",
+              "      <td>-668.0</td>\n",
+              "      <td>-634.0</td>\n",
+              "      <td>-198.0</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>세전계속사업이익</td>\n",
+              "      <td>376.0</td>\n",
+              "      <td>538.0</td>\n",
+              "      <td>-925.0</td>\n",
+              "      <td>-819.0</td>\n",
+              "      <td>-366.0</td>\n",
+              "      <td>-109.0</td>\n",
+              "      <td>14.0</td>\n",
+              "      <td>172.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>당기순이익</td>\n",
+              "      <td>274.0</td>\n",
+              "      <td>380.0</td>\n",
+              "      <td>-736.0</td>\n",
+              "      <td>-677.0</td>\n",
+              "      <td>-285.0</td>\n",
+              "      <td>-100.0</td>\n",
+              "      <td>71.0</td>\n",
+              "      <td>214.0</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "       주요재무정보  2019/09\\n(IFRS연결)  ...  2021/03(E)\\n(IFRS연결)  2021/06(E)\\n(IFRS연결)\n",
+              "0         매출액            14753.0  ...                9761.0                9820.0\n",
+              "1        영업이익              574.0  ...                 144.0                 265.0\n",
+              "2  영업이익(발표기준)              574.0  ...                   NaN                   NaN\n",
+              "3    세전계속사업이익              376.0  ...                  14.0                 172.0\n",
+              "4       당기순이익              274.0  ...                  71.0                 214.0\n",
+              "\n",
+              "[5 rows x 9 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 5
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "xP_zhrJ-mcn7"
+      },
+      "source": [
+        "#하원호 님 코드 참고하였습니다... \n",
+        "df1 = pd.read_excel(data_url, sheet_name=0)\n",
+        "df2 = pd.read_excel(data_url, sheet_name=1)"
+      ],
+      "execution_count": 6,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "_oB463iCTgs3"
+      },
+      "source": [
+        "#column_headers = ['주요재무정보','매출액','영업이익','영업이익(발표기준)','세전계속사업이익','당기순이익']\n",
+        "\n",
+        "#df = pd.read_excel(data_url, names = column_headers)\n",
+        "\n",
+        "#print(df.head())\n",
+        "#print(df.shape) 아 개망해따 이거에요"
+      ],
+      "execution_count": 7,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Oz55gV5mnR1h",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "37059a6d-90aa-45fa-e88b-b16ea07e9cf8"
+      },
+      "source": [
+        "df1 = df1.set_index('주요재무정보').T\n",
+        "print(f'df1 shape: {df1.shape}')"
+      ],
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "df1 shape: (8, 32)\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "5YINMfhnxVmm",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "5b341136-c2b0-48fc-9e64-48120d28b50a"
+      },
+      "source": [
+        "print(df1.info())"
+      ],
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "<class 'pandas.core.frame.DataFrame'>\n",
+            "Index: 8 entries, 2019/09\n",
+            "(IFRS연결) to 2021/06(E)\n",
+            "(IFRS연결)\n",
+            "Data columns (total 32 columns):\n",
+            " #   Column      Non-Null Count  Dtype  \n",
+            "---  ------      --------------  -----  \n",
+            " 0   매출액         8 non-null      float64\n",
+            " 1   영업이익        8 non-null      float64\n",
+            " 2   영업이익(발표기준)  5 non-null      float64\n",
+            " 3   세전계속사업이익    8 non-null      float64\n",
+            " 4   당기순이익       8 non-null      float64\n",
+            " 5   당기순이익(지배)   8 non-null      float64\n",
+            " 6   당기순이익(비지배)  5 non-null      float64\n",
+            " 7   자산총계        6 non-null      float64\n",
+            " 8   부채총계        6 non-null      float64\n",
+            " 9   자본총계        6 non-null      float64\n",
+            " 10  자본총계(지배)    6 non-null      float64\n",
+            " 11  자본총계(비지배)   5 non-null      float64\n",
+            " 12  자본금         6 non-null      float64\n",
+            " 13  영업활동현금흐름    5 non-null      float64\n",
+            " 14  투자활동현금흐름    5 non-null      float64\n",
+            " 15  재무활동현금흐름    5 non-null      float64\n",
+            " 16  CAPEX       5 non-null      float64\n",
+            " 17  FCF         5 non-null      float64\n",
+            " 18  이자발생부채      5 non-null      float64\n",
+            " 19  영업이익률       8 non-null      float64\n",
+            " 20  순이익률        8 non-null      float64\n",
+            " 21  ROE(%)      5 non-null      float64\n",
+            " 22  ROA(%)      5 non-null      float64\n",
+            " 23  부채비율        6 non-null      float64\n",
+            " 24  자본유보율       5 non-null      float64\n",
+            " 25  EPS(원)      8 non-null      float64\n",
+            " 26  PER(배)      3 non-null      float64\n",
+            " 27  BPS(원)      6 non-null      float64\n",
+            " 28  PBR(배)      6 non-null      float64\n",
+            " 29  현금DPS(원)    2 non-null      float64\n",
+            " 30  현금배당수익률     0 non-null      float64\n",
+            " 31  현금배당성향(%)   4 non-null      float64\n",
+            "dtypes: float64(32)\n",
+            "memory usage: 2.1+ KB\n",
+            "None\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "156P6ndeKojO"
+      },
+      "source": [
+        "## 2. 데이터 확인\n",
+        "\n",
+        "- 데이터의 dimension을 확인하세요.\n",
+        "- 데이터의 결측치가 어디에 있는지 확인 후 0으로 대체하세요.\n",
+        "- 각 데이터 별로 **FCF**의 값을 barplot으로 시각화하세요.\n",
+        "  - 0보다 큰값, 작은값의 수의 총합을 `num1`, `num2`에 저장하세요\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "SdMoY5Zp0_8I",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 538
+        },
+        "outputId": "ada540b8-353e-45d1-be35-e5d224ba711b"
+      },
+      "source": [
+        "#결측치가 뭐지\n",
+        "#찾아보니 is 함수가 관련되어 있음\n",
+        "df1.isnull()"
+      ],
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th>주요재무정보</th>\n",
+              "      <th>매출액</th>\n",
+              "      <th>영업이익</th>\n",
+              "      <th>영업이익(발표기준)</th>\n",
+              "      <th>세전계속사업이익</th>\n",
+              "      <th>당기순이익</th>\n",
+              "      <th>당기순이익(지배)</th>\n",
+              "      <th>당기순이익(비지배)</th>\n",
+              "      <th>자산총계</th>\n",
+              "      <th>부채총계</th>\n",
+              "      <th>자본총계</th>\n",
+              "      <th>자본총계(지배)</th>\n",
+              "      <th>자본총계(비지배)</th>\n",
+              "      <th>자본금</th>\n",
+              "      <th>영업활동현금흐름</th>\n",
+              "      <th>투자활동현금흐름</th>\n",
+              "      <th>재무활동현금흐름</th>\n",
+              "      <th>CAPEX</th>\n",
+              "      <th>FCF</th>\n",
+              "      <th>이자발생부채</th>\n",
+              "      <th>영업이익률</th>\n",
+              "      <th>순이익률</th>\n",
+              "      <th>ROE(%)</th>\n",
+              "      <th>ROA(%)</th>\n",
+              "      <th>부채비율</th>\n",
+              "      <th>자본유보율</th>\n",
+              "      <th>EPS(원)</th>\n",
+              "      <th>PER(배)</th>\n",
+              "      <th>BPS(원)</th>\n",
+              "      <th>PBR(배)</th>\n",
+              "      <th>현금DPS(원)</th>\n",
+              "      <th>현금배당수익률</th>\n",
+              "      <th>현금배당성향(%)</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>2019/09\\n(IFRS연결)</th>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2019/12\\n(IFRS연결)</th>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2020/03\\n(IFRS연결)</th>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2020/06\\n(IFRS연결)</th>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2020/09\\n(IFRS연결)</th>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2020/12(E)\\n(IFRS연결)</th>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2021/03(E)\\n(IFRS연결)</th>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2021/06(E)\\n(IFRS연결)</th>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>False</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "      <td>True</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "주요재무정보                  매출액   영업이익  영업이익(발표기준)  ...  현금DPS(원)  현금배당수익률  현금배당성향(%)\n",
+              "2019/09\\n(IFRS연결)     False  False       False  ...     False     True      False\n",
+              "2019/12\\n(IFRS연결)     False  False       False  ...     False     True      False\n",
+              "2020/03\\n(IFRS연결)     False  False       False  ...      True     True      False\n",
+              "2020/06\\n(IFRS연결)     False  False       False  ...      True     True      False\n",
+              "2020/09\\n(IFRS연결)     False  False       False  ...      True     True       True\n",
+              "2020/12(E)\\n(IFRS연결)  False  False        True  ...      True     True       True\n",
+              "2021/03(E)\\n(IFRS연결)  False  False        True  ...      True     True       True\n",
+              "2021/06(E)\\n(IFRS연결)  False  False        True  ...      True     True       True\n",
+              "\n",
+              "[8 rows x 32 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 10
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "3rLu4D6U2Vpn",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "6e148e8a-7990-4c34-f92f-30491026ded3"
+      },
+      "source": [
+        "#뭐여...하원호님꺼 다시 써보자...\n",
+        "print(df1.isnull().sum())\n",
+        "# 아하 이게 더 보기 쉬어서 이거 쓰셨나보네....\n",
+        "#그럼 0으로 대체가 되었으니 대치 (Imputation) 를 해야 하고 dropna를ㄹ 쓰면 안 됨 fillna를 써야함\n",
+        "#https://wooono.tistory.com/103 \n",
+        "#위 링크 참고함 정리 개잘하심....부럽..."
+      ],
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "주요재무정보\n",
+            "매출액           0\n",
+            "영업이익          0\n",
+            "영업이익(발표기준)    3\n",
+            "세전계속사업이익      0\n",
+            "당기순이익         0\n",
+            "당기순이익(지배)     0\n",
+            "당기순이익(비지배)    3\n",
+            "자산총계          2\n",
+            "부채총계          2\n",
+            "자본총계          2\n",
+            "자본총계(지배)      2\n",
+            "자본총계(비지배)     3\n",
+            "자본금           2\n",
+            "영업활동현금흐름      3\n",
+            "투자활동현금흐름      3\n",
+            "재무활동현금흐름      3\n",
+            "CAPEX         3\n",
+            "FCF           3\n",
+            "이자발생부채        3\n",
+            "영업이익률         0\n",
+            "순이익률          0\n",
+            "ROE(%)        3\n",
+            "ROA(%)        3\n",
+            "부채비율          2\n",
+            "자본유보율         3\n",
+            "EPS(원)        0\n",
+            "PER(배)        5\n",
+            "BPS(원)        2\n",
+            "PBR(배)        2\n",
+            "현금DPS(원)      6\n",
+            "현금배당수익률       8\n",
+            "현금배당성향(%)     4\n",
+            "dtype: int64\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "vxwth2oU3nHB",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 555
+        },
+        "outputId": "6748dd98-a058-4564-b615-0789e12488e8"
+      },
+      "source": [
+        "#df1.fillna() 왜 안 돼\n",
+        "df1.fillna(0) #아..."
+      ],
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th>주요재무정보</th>\n",
+              "      <th>매출액</th>\n",
+              "      <th>영업이익</th>\n",
+              "      <th>영업이익(발표기준)</th>\n",
+              "      <th>세전계속사업이익</th>\n",
+              "      <th>당기순이익</th>\n",
+              "      <th>당기순이익(지배)</th>\n",
+              "      <th>당기순이익(비지배)</th>\n",
+              "      <th>자산총계</th>\n",
+              "      <th>부채총계</th>\n",
+              "      <th>자본총계</th>\n",
+              "      <th>자본총계(지배)</th>\n",
+              "      <th>자본총계(비지배)</th>\n",
+              "      <th>자본금</th>\n",
+              "      <th>영업활동현금흐름</th>\n",
+              "      <th>투자활동현금흐름</th>\n",
+              "      <th>재무활동현금흐름</th>\n",
+              "      <th>CAPEX</th>\n",
+              "      <th>FCF</th>\n",
+              "      <th>이자발생부채</th>\n",
+              "      <th>영업이익률</th>\n",
+              "      <th>순이익률</th>\n",
+              "      <th>ROE(%)</th>\n",
+              "      <th>ROA(%)</th>\n",
+              "      <th>부채비율</th>\n",
+              "      <th>자본유보율</th>\n",
+              "      <th>EPS(원)</th>\n",
+              "      <th>PER(배)</th>\n",
+              "      <th>BPS(원)</th>\n",
+              "      <th>PBR(배)</th>\n",
+              "      <th>현금DPS(원)</th>\n",
+              "      <th>현금배당수익률</th>\n",
+              "      <th>현금배당성향(%)</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>2019/09\\n(IFRS연결)</th>\n",
+              "      <td>14753.0</td>\n",
+              "      <td>574.0</td>\n",
+              "      <td>574.0</td>\n",
+              "      <td>376.0</td>\n",
+              "      <td>274.0</td>\n",
+              "      <td>277.0</td>\n",
+              "      <td>-3.0</td>\n",
+              "      <td>37747.0</td>\n",
+              "      <td>28854.0</td>\n",
+              "      <td>8893.0</td>\n",
+              "      <td>8889.0</td>\n",
+              "      <td>4.0</td>\n",
+              "      <td>2000.0</td>\n",
+              "      <td>1652.0</td>\n",
+              "      <td>-284.0</td>\n",
+              "      <td>-900.0</td>\n",
+              "      <td>159.0</td>\n",
+              "      <td>1493.0</td>\n",
+              "      <td>19035.0</td>\n",
+              "      <td>3.89</td>\n",
+              "      <td>1.86</td>\n",
+              "      <td>13.18</td>\n",
+              "      <td>3.62</td>\n",
+              "      <td>324.45</td>\n",
+              "      <td>395.10</td>\n",
+              "      <td>692.0</td>\n",
+              "      <td>31.19</td>\n",
+              "      <td>23484.0</td>\n",
+              "      <td>3.67</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.00</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2019/12\\n(IFRS연결)</th>\n",
+              "      <td>15440.0</td>\n",
+              "      <td>776.0</td>\n",
+              "      <td>776.0</td>\n",
+              "      <td>538.0</td>\n",
+              "      <td>380.0</td>\n",
+              "      <td>380.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>35273.0</td>\n",
+              "      <td>26077.0</td>\n",
+              "      <td>9195.0</td>\n",
+              "      <td>9192.0</td>\n",
+              "      <td>4.0</td>\n",
+              "      <td>2000.0</td>\n",
+              "      <td>-480.0</td>\n",
+              "      <td>-208.0</td>\n",
+              "      <td>1230.0</td>\n",
+              "      <td>109.0</td>\n",
+              "      <td>-589.0</td>\n",
+              "      <td>15615.0</td>\n",
+              "      <td>5.03</td>\n",
+              "      <td>2.46</td>\n",
+              "      <td>20.16</td>\n",
+              "      <td>5.81</td>\n",
+              "      <td>283.59</td>\n",
+              "      <td>411.78</td>\n",
+              "      <td>950.0</td>\n",
+              "      <td>21.40</td>\n",
+              "      <td>24282.0</td>\n",
+              "      <td>3.74</td>\n",
+              "      <td>350.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>34.94</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2020/03\\n(IFRS연결)</th>\n",
+              "      <td>9437.0</td>\n",
+              "      <td>-668.0</td>\n",
+              "      <td>-668.0</td>\n",
+              "      <td>-925.0</td>\n",
+              "      <td>-736.0</td>\n",
+              "      <td>-736.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>33188.0</td>\n",
+              "      <td>24813.0</td>\n",
+              "      <td>8375.0</td>\n",
+              "      <td>8371.0</td>\n",
+              "      <td>4.0</td>\n",
+              "      <td>2000.0</td>\n",
+              "      <td>-4525.0</td>\n",
+              "      <td>-237.0</td>\n",
+              "      <td>1288.0</td>\n",
+              "      <td>155.0</td>\n",
+              "      <td>-4680.0</td>\n",
+              "      <td>17505.0</td>\n",
+              "      <td>-7.08</td>\n",
+              "      <td>-7.80</td>\n",
+              "      <td>5.39</td>\n",
+              "      <td>1.25</td>\n",
+              "      <td>296.28</td>\n",
+              "      <td>368.36</td>\n",
+              "      <td>-1839.0</td>\n",
+              "      <td>63.76</td>\n",
+              "      <td>22114.0</td>\n",
+              "      <td>3.19</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.00</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2020/06\\n(IFRS연결)</th>\n",
+              "      <td>5230.0</td>\n",
+              "      <td>-634.0</td>\n",
+              "      <td>-634.0</td>\n",
+              "      <td>-819.0</td>\n",
+              "      <td>-677.0</td>\n",
+              "      <td>-678.0</td>\n",
+              "      <td>1.0</td>\n",
+              "      <td>33039.0</td>\n",
+              "      <td>25364.0</td>\n",
+              "      <td>7676.0</td>\n",
+              "      <td>7671.0</td>\n",
+              "      <td>5.0</td>\n",
+              "      <td>2000.0</td>\n",
+              "      <td>879.0</td>\n",
+              "      <td>-856.0</td>\n",
+              "      <td>448.0</td>\n",
+              "      <td>90.0</td>\n",
+              "      <td>789.0</td>\n",
+              "      <td>18933.0</td>\n",
+              "      <td>-12.13</td>\n",
+              "      <td>-12.95</td>\n",
+              "      <td>-9.31</td>\n",
+              "      <td>-2.14</td>\n",
+              "      <td>330.45</td>\n",
+              "      <td>334.46</td>\n",
+              "      <td>-1695.0</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>20265.0</td>\n",
+              "      <td>3.50</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.00</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2020/09\\n(IFRS연결)</th>\n",
+              "      <td>8795.0</td>\n",
+              "      <td>-198.0</td>\n",
+              "      <td>-198.0</td>\n",
+              "      <td>-366.0</td>\n",
+              "      <td>-285.0</td>\n",
+              "      <td>-285.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>32683.0</td>\n",
+              "      <td>25318.0</td>\n",
+              "      <td>7365.0</td>\n",
+              "      <td>7360.0</td>\n",
+              "      <td>5.0</td>\n",
+              "      <td>2000.0</td>\n",
+              "      <td>3104.0</td>\n",
+              "      <td>-1388.0</td>\n",
+              "      <td>-882.0</td>\n",
+              "      <td>129.0</td>\n",
+              "      <td>2975.0</td>\n",
+              "      <td>17755.0</td>\n",
+              "      <td>-2.25</td>\n",
+              "      <td>-3.24</td>\n",
+              "      <td>-16.22</td>\n",
+              "      <td>-3.74</td>\n",
+              "      <td>343.77</td>\n",
+              "      <td>320.21</td>\n",
+              "      <td>-712.0</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>19444.0</td>\n",
+              "      <td>3.91</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.00</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2020/12(E)\\n(IFRS연결)</th>\n",
+              "      <td>9980.0</td>\n",
+              "      <td>50.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>-109.0</td>\n",
+              "      <td>-100.0</td>\n",
+              "      <td>-100.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>32388.0</td>\n",
+              "      <td>25171.0</td>\n",
+              "      <td>7216.0</td>\n",
+              "      <td>7263.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>2000.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.50</td>\n",
+              "      <td>-1.01</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>348.79</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>-251.0</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>19187.0</td>\n",
+              "      <td>4.22</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.00</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2021/03(E)\\n(IFRS연결)</th>\n",
+              "      <td>9761.0</td>\n",
+              "      <td>144.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>14.0</td>\n",
+              "      <td>71.0</td>\n",
+              "      <td>53.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1.47</td>\n",
+              "      <td>0.73</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>133.0</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.00</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2021/06(E)\\n(IFRS연결)</th>\n",
+              "      <td>9820.0</td>\n",
+              "      <td>265.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>172.0</td>\n",
+              "      <td>214.0</td>\n",
+              "      <td>123.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>2.70</td>\n",
+              "      <td>2.18</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>308.0</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.00</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>0.00</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "주요재무정보                    매출액   영업이익  영업이익(발표기준)  ...  현금DPS(원)  현금배당수익률  현금배당성향(%)\n",
+              "2019/09\\n(IFRS연결)     14753.0  574.0       574.0  ...       0.0      0.0       0.00\n",
+              "2019/12\\n(IFRS연결)     15440.0  776.0       776.0  ...     350.0      0.0      34.94\n",
+              "2020/03\\n(IFRS연결)      9437.0 -668.0      -668.0  ...       0.0      0.0       0.00\n",
+              "2020/06\\n(IFRS연결)      5230.0 -634.0      -634.0  ...       0.0      0.0       0.00\n",
+              "2020/09\\n(IFRS연결)      8795.0 -198.0      -198.0  ...       0.0      0.0       0.00\n",
+              "2020/12(E)\\n(IFRS연결)   9980.0   50.0         0.0  ...       0.0      0.0       0.00\n",
+              "2021/03(E)\\n(IFRS연결)   9761.0  144.0         0.0  ...       0.0      0.0       0.00\n",
+              "2021/06(E)\\n(IFRS연결)   9820.0  265.0         0.0  ...       0.0      0.0       0.00\n",
+              "\n",
+              "[8 rows x 32 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 12
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "n3DyOejD36gT",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "310e5903-2ab3-4f87-cd61-10d1111a7ee5"
+      },
+      "source": [
+        "df1.fillna(0, inplace=True)\n",
+        "print(df1.isnull().sum())\n",
+        "#.sum()을 하니 다 0이 됨...무슨 뜻인지 찾아봐야함\n",
+        "#https://numpy.org/doc/stable/reference/generated/numpy.sum.html\n",
+        "#...? 아직까진 라이브러리 잘 못 읽겠음...\n",
+        "#라이브러리 대로라면 다 더한 몇십의 값이 나와야 하는데 왜 다 더하니 오히려 0이 나오지...?"
+      ],
+      "execution_count": 13,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "주요재무정보\n",
+            "매출액           0\n",
+            "영업이익          0\n",
+            "영업이익(발표기준)    0\n",
+            "세전계속사업이익      0\n",
+            "당기순이익         0\n",
+            "당기순이익(지배)     0\n",
+            "당기순이익(비지배)    0\n",
+            "자산총계          0\n",
+            "부채총계          0\n",
+            "자본총계          0\n",
+            "자본총계(지배)      0\n",
+            "자본총계(비지배)     0\n",
+            "자본금           0\n",
+            "영업활동현금흐름      0\n",
+            "투자활동현금흐름      0\n",
+            "재무활동현금흐름      0\n",
+            "CAPEX         0\n",
+            "FCF           0\n",
+            "이자발생부채        0\n",
+            "영업이익률         0\n",
+            "순이익률          0\n",
+            "ROE(%)        0\n",
+            "ROA(%)        0\n",
+            "부채비율          0\n",
+            "자본유보율         0\n",
+            "EPS(원)        0\n",
+            "PER(배)        0\n",
+            "BPS(원)        0\n",
+            "PBR(배)        0\n",
+            "현금DPS(원)      0\n",
+            "현금배당수익률       0\n",
+            "현금배당성향(%)     0\n",
+            "dtype: int64\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sOgcMZR45RgK"
+      },
+      "source": [
+        "#각 데이터 별로 FCF의 값을 barplot으로 시각화하세요.\n",
+        "#0보다 큰값, 작은값의 수의 총합을 num1, num2에 저장하세요 \n",
+        "##골떄리네"
+      ],
+      "execution_count": 14,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "mJig_Vu455F1"
+      },
+      "source": [
+        "#df1.plot();\n",
+        "# a = df1['FCF'].plot;\n",
+        "# print(a)"
+      ],
+      "execution_count": 15,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "s_ld2YJujRSb"
+      },
+      "source": [
+        "num1 = '1'\n",
+        "num2 = '2'"
+      ],
+      "execution_count": 16,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "OGMOBwEBTqKS"
+      },
+      "source": [
+        "## 3. File export\n",
+        "\n",
+        "- 읽었던 엑셀 파일의 내용을 2개의 csv로 각각 출력하세요. (python export csv)\n",
+        "\n",
+        "  - 이름은 각각 `df1.csv`, `df2.csv` 입니다.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "xe47NX7qk53H"
+      },
+      "source": [
+        "# 아....음....이 링크를 보고 느낀점..왜 기본형 예시는 없는 걸까...\n",
+        "# https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_csv.html\n",
+        "df1.to_csv(\"df1.csv\")\n",
+        "df2.to_csv(\"df2.csv\")"
+      ],
+      "execution_count": 17,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "DCZ01w4Ps-jO"
+      },
+      "source": [
+        "## 4. Error Handling\n",
+        "\n",
+        "- 다음의 에러를 고치세요. 결과값은 6912가 나와야합니다.\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "NJdISe69ZT7E",
+        "outputId": "edf736a3-c01c-4014-d3c0-ffacd7cef569"
+      },
+      "source": [
+        "a = 1234\n",
+        "b = 5678\n",
+        "\n",
+        "a+b"
+      ],
+      "execution_count": 18,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "6912"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 18
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "en0Q_b5L4fxA"
+      },
+      "source": [
+        "## Grading\n",
+        "\n",
+        "이전 과제를 완료했다면, 아래의 코드를 실행하세요. "
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "1k3zn-YV4fdg"
+      },
+      "source": [
+        "import os\n",
+        "\n",
+        "def grade(df1, df2, num1, num2):\n",
+        "  score = 0\n",
+        "  \n",
+        "  score += (df1['매출액'][0] == 14753)\n",
+        "  score += (df2['매출액'][1] == 3728)\n",
+        "\n",
+        "  score += (df1.shape == (7, 32))\n",
+        "  score += (df2.isnull().sum().sum() == 0)\n",
+        "  score += (num1 == 4 and num2 == 6)\n",
+        "\n",
+        "  score += (os.listdir() == ['.config', 'df2.csv', 'df1.csv', 'sample_data'])\n",
+        "\n",
+        "  score += (a+b == 6912)\n",
+        "\n",
+        "  return(score)"
+      ],
+      "execution_count": 19,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "nj_RslFn4lCM",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 630
+        },
+        "outputId": "9747e31f-7e88-493b-8660-42b8bde99976"
+      },
+      "source": [
+        "grade(df1, df2, num1, num2)"
+      ],
+      "execution_count": 20,
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "KeyError",
+          "evalue": "ignored",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mKeyError\u001b[0m                                  Traceback (most recent call last)",
+            "\u001b[0;32m/usr/local/lib/python3.7/dist-packages/pandas/core/indexes/base.py\u001b[0m in \u001b[0;36mget_loc\u001b[0;34m(self, key, method, tolerance)\u001b[0m\n\u001b[1;32m   2897\u001b[0m             \u001b[0;32mtry\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 2898\u001b[0;31m                 \u001b[0;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_engine\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mget_loc\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mcasted_key\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   2899\u001b[0m             \u001b[0;32mexcept\u001b[0m \u001b[0mKeyError\u001b[0m \u001b[0;32mas\u001b[0m \u001b[0merr\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32mpandas/_libs/index.pyx\u001b[0m in \u001b[0;36mpandas._libs.index.IndexEngine.get_loc\u001b[0;34m()\u001b[0m\n",
+            "\u001b[0;32mpandas/_libs/index.pyx\u001b[0m in \u001b[0;36mpandas._libs.index.IndexEngine.get_loc\u001b[0;34m()\u001b[0m\n",
+            "\u001b[0;32mpandas/_libs/hashtable_class_helper.pxi\u001b[0m in \u001b[0;36mpandas._libs.hashtable.PyObjectHashTable.get_item\u001b[0;34m()\u001b[0m\n",
+            "\u001b[0;32mpandas/_libs/hashtable_class_helper.pxi\u001b[0m in \u001b[0;36mpandas._libs.hashtable.PyObjectHashTable.get_item\u001b[0;34m()\u001b[0m\n",
+            "\u001b[0;31mKeyError\u001b[0m: '매출액'",
+            "\nThe above exception was the direct cause of the following exception:\n",
+            "\u001b[0;31mKeyError\u001b[0m                                  Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-20-a38472b9d9bb>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m()\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0mgrade\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mdf1\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mdf2\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mnum1\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mnum2\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+            "\u001b[0;32m<ipython-input-19-e338bfe5b819>\u001b[0m in \u001b[0;36mgrade\u001b[0;34m(df1, df2, num1, num2)\u001b[0m\n\u001b[1;32m      5\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      6\u001b[0m   \u001b[0mscore\u001b[0m \u001b[0;34m+=\u001b[0m \u001b[0;34m(\u001b[0m\u001b[0mdf1\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m'매출액'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m0\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;34m==\u001b[0m \u001b[0;36m14753\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 7\u001b[0;31m   \u001b[0mscore\u001b[0m \u001b[0;34m+=\u001b[0m \u001b[0;34m(\u001b[0m\u001b[0mdf2\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m'매출액'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;34m==\u001b[0m \u001b[0;36m3728\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      8\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      9\u001b[0m   \u001b[0mscore\u001b[0m \u001b[0;34m+=\u001b[0m \u001b[0;34m(\u001b[0m\u001b[0mdf1\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mshape\u001b[0m \u001b[0;34m==\u001b[0m \u001b[0;34m(\u001b[0m\u001b[0;36m7\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m32\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.7/dist-packages/pandas/core/frame.py\u001b[0m in \u001b[0;36m__getitem__\u001b[0;34m(self, key)\u001b[0m\n\u001b[1;32m   2904\u001b[0m             \u001b[0;32mif\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mcolumns\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mnlevels\u001b[0m \u001b[0;34m>\u001b[0m \u001b[0;36m1\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   2905\u001b[0m                 \u001b[0;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_getitem_multilevel\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mkey\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 2906\u001b[0;31m             \u001b[0mindexer\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mcolumns\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mget_loc\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mkey\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   2907\u001b[0m             \u001b[0;32mif\u001b[0m \u001b[0mis_integer\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mindexer\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   2908\u001b[0m                 \u001b[0mindexer\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0mindexer\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.7/dist-packages/pandas/core/indexes/base.py\u001b[0m in \u001b[0;36mget_loc\u001b[0;34m(self, key, method, tolerance)\u001b[0m\n\u001b[1;32m   2898\u001b[0m                 \u001b[0;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_engine\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mget_loc\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mcasted_key\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   2899\u001b[0m             \u001b[0;32mexcept\u001b[0m \u001b[0mKeyError\u001b[0m \u001b[0;32mas\u001b[0m \u001b[0merr\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 2900\u001b[0;31m                 \u001b[0;32mraise\u001b[0m \u001b[0mKeyError\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mkey\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;32mfrom\u001b[0m \u001b[0merr\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   2901\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   2902\u001b[0m         \u001b[0;32mif\u001b[0m \u001b[0mtolerance\u001b[0m \u001b[0;32mis\u001b[0m \u001b[0;32mnot\u001b[0m \u001b[0;32mNone\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mKeyError\u001b[0m: '매출액'"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "axPHh5t5s124"
+      },
+      "source": [
+        "## 🔥 도전과제 \n",
+        "\n",
+        "- 다음 데이터를 사용하여 아래와 동일한 그래프를 그리세요.\n",
+        "\n",
+        "<https://ds-lecture-data.s3.ap-northeast-2.amazonaws.com/stocks/TSLA.csv>\n",
+        "\n",
+        "<img src='https://i.imgur.com/UsS5JcZ.png'>\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "eNGiylrhwm2D"
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
